@@ -1,4 +1,3 @@
-
 <?php
 
     if(isset($_POST['name'])){
@@ -7,13 +6,12 @@
 
         $reg = new DataBase;
 
-        
+        $upload = $reg->register();
 
-
-        if($reg->register()){
+        if($upload === true){
             
         }else{
-            echo 'else';
+            echo '<pre>'; print_r($upload);
         }
 
 die;

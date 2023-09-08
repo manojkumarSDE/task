@@ -89,14 +89,10 @@ class DataBase extends GeneralConfig {
 			$sm = $this->conn->prepare("INSERT INTO");
 
 		}catch(Exception $e) {
-			$trans[] = $e->getMessage();
+			return $e->getMessage();
 		}
 
-		if(!empty($log)){
-			return $log;
-		}else{
-			return true;
-		}
+		return true;
 
 	}
 
