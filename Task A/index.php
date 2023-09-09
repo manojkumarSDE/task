@@ -1,5 +1,6 @@
 <?php
 
-header('Location: login.php');
+	require_once 'includes/GeneralConfig.php';
+	header('Location: ' . BASE_URL);
 
 ?>

@@ -1,14 +1,12 @@
 <?php
 
-    require_once 'includes/GeneralConfig.php';
-
     $err = '';
     $succ = '';
     $errors = [];
 
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-        require_once 'includes/DataBase.php';
+        require_once '../../includes/DataBase.php';
 
         $db = new DataBase;
 
@@ -29,23 +27,24 @@
         }
 
     }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin</title>
     <style type="text/css">
         .error {
             color: red;
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
+    <?php require_once 'navbar.php'; ?>
+    <!-- Content -->
+     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
@@ -113,14 +112,12 @@
                                 <span class="error"><?php echo (!empty($errors['signature'])) ? $errors['signature'] : ''; ?></span>
                             </div>
                             <button type="submit" class="btn btn-primary">Register</button>
-                            <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-info">Login</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
