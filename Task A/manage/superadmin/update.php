@@ -6,7 +6,7 @@
         header('Location: '. BASE_URL);
     }
 
-    if($_SESSION['role_id'] !== 3){
+    if($_SESSION['role_id'] !== 1){
         header( 'HTTP/1.0 403 Forbidden', TRUE, 403 );
         die ("Access Denied!");
     }
@@ -19,7 +19,7 @@
 
     $db = new DataBase;
 
-    $user_data = $db->get_user($_SESSION['id']);
+    $user_data = $db->get_user($_GET['userID']);
 
     if(!$user_data){
         die('User not found');
@@ -33,10 +33,11 @@
             $errors = $chkErrors;
         }else{
 
-            $reg = $db->update_user($_SESSION['id']);
+            $reg = $db->update_user($_GET['userID']);
 
             if($reg === true){
-                 $succ = 'User Details Successfully Updated';
+                header('Location: ' . BASE_URL . 'manage/superadmin/?updateUser=success');
+                //$succ = 'User Details Successfully Updated';
             }else{
                  $err = $reg;
             }
@@ -51,7 +52,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User</title>
+    <title>Super Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -62,7 +63,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Update Profile</h4>
+                        <h4>Update Registration</h4>
                     </div>
                     <div class="card-body">
                         <p style="color:red;"><?php echo $err; ?></p>

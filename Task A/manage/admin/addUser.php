@@ -1,5 +1,16 @@
 <?php
 
+    session_start();
+
+    if(empty($_SESSION['role_id'])){
+        header('Location: '. BASE_URL);
+    }
+
+    if($_SESSION['role_id'] !== 2){
+        header( 'HTTP/1.0 403 Forbidden', TRUE, 403 );
+        die ("Access Denied!");
+    }
+
     $err = '';
     $succ = '';
     $errors = [];

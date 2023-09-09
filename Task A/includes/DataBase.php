@@ -12,6 +12,8 @@ class DataBase extends GeneralConfig {
 	public function __construct(){
 		parent:: __construct();
 
+		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 		$this->connect = new mysqli($this->servername, $this->username, $this->password, $this->databasename);
 
 		if($this->connect->connect_error){
@@ -25,13 +27,13 @@ class DataBase extends GeneralConfig {
 	}
  
 	public function check_permission($role_id, $permission_name){
-		$smt = $this->connect->prepare("SELECT count(1) FROM user_role_permissions WHERE role_id = ? AND permission_id = (SELECT permission_id FROM permissions WHERE permission_name like ?) ");
+		$smt = $this->connect->prepare("SELECT count(1) as cnt FROM user_role_permissions WHERE role_id = ? AND permission_id = (SELECT permission_id FROM permissions WHERE permission_name like ?) ");
 		$smt->bind_param("is", $role_id, $permission_name);
 
 		$smt->execute();
 		$result = $smt->get_result();
 
-		if ($result->num_rows == 0) {
+		if ($result->fetch_assoc()['cnt'] < 1) {
 			return false; 
 		}
 
@@ -58,7 +60,7 @@ class DataBase extends GeneralConfig {
 			if(password_verify($password, $hashed_password)){
 
 				if($row['role_id'] === 3 && $row['approval_status'] === 'Pending'){
-					throw new Exception('Admin Approval Pending');
+					throw new Exception('Admin Approval is Pending');
 				}
 
 				session_start();
@@ -113,6 +115,12 @@ class DataBase extends GeneralConfig {
 
 	public function get_user($user_id){
 
+		$smt = $this->connect->prepare("SELECT * FROM users WHERE id = ?");
+		$smt->bind_param('i', $user_id);
+		$smt->execute();
+		$result = $smt->get_result();
+
+		return $result->fetch_assoc();
 	}
 
 	public function file_upload($file_name) {
@@ -246,7 +254,7 @@ class DataBase extends GeneralConfig {
 		$smt->bind_param("sssssss", $username, $hash_pwd, $mobile, $email, $address, $gender, $dob);
 		$smt->execute();
 
-		if($smt->affected_rows == 0){
+		if($smt->affected_rows < 1){
 			throw new Exception('Failed to Save Data');
 		}
 
@@ -258,6 +266,39 @@ class DataBase extends GeneralConfig {
 
 		return true;
 
+	}
+
+	public function update_user($user_id){
+		try {
+
+		$username = $this->sanitize($_POST['username']);
+		$password = $this->sanitize($_POST['password']);
+		$mobile = $this->sanitize($_POST['mobile']);
+		$email = $this->sanitize($_POST['email']);
+		$address = $this->sanitize($_POST['address']);
+		$gender = $this->sanitize($_POST['gender']);
+		$dob = $this->sanitize($_POST['dob']);
+
+		$profile_picture = $this->file_upload('profilePicture');
+		$signature = $this->file_upload('signature');
+
+		$hash_pwd = password_hash($password, PASSWORD_DEFAULT);
+
+		$smt = $this->connect->prepare("UPDATE users SET username = ?, password = ?, mobile = ?, email = ?, address = ?, gender = ?, dob = ?, profile_picture = '$profile_picture', signature = '$signature' WHERE id = ?");
+		$smt->bind_param("sssssssi", $username, $hash_pwd, $mobile, $email, $address, $gender, $dob, $user_id);
+		$smt->execute();
+
+		if($smt->affected_rows < 1){
+			throw new Exception('Failed to Update Data');
+		}
+
+		$smt->close();
+
+		}catch(Exception $e) {
+			return $e->getMessage();
+		}
+
+		return true;
 	}
 
 	public function random_timestamp(){

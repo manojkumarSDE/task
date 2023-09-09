@@ -8,7 +8,7 @@
 		header('location: ' . BASE_URL);
 	}
 
-    if($_SESSION['role_id'] !== 1){
+    if($_SESSION['role_id'] !== 3){
         header( 'HTTP/1.0 403 Forbidden', TRUE, 403 );
         die ("Access Denied!");
     }

@@ -8,6 +8,11 @@
         header('Location: '. BASE_URL);
     }
 
+    if($_SESSION['role_id'] !== 1){
+        header( 'HTTP/1.0 403 Forbidden', TRUE, 403 );
+        die ("Access Denied!");
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -29,6 +34,12 @@
                 echo '<span style="color: green;">User Successfully Deleted</span>';
             }else{
                 echo '<span style="color: red;">Failed to Delete User</span>';
+            }
+        }
+
+        if(isset($_GET['updateUser'])){
+            if($_GET['updateUser'] == 'success'){
+                echo '<span style="color: green;">User Details Successfully Updated</span>';
             }
         }
 
@@ -63,7 +74,7 @@
     <script type="text/javascript">
     $(document).ready(function () {
         $.ajax({
-            url: '../../json/handler.php?users',
+            url: '<?php echo BASE_URL; ?>json/handler.php?users',
             method: 'GET',
             dataType: 'json',
             success: function (data) {
@@ -75,7 +86,11 @@
 
                     let signature = `<a target="_blank" href="../../uploads/${item.signature}"><img style="height: 20px;" src="../../uploads/${item.signature}"></a>`;
 
+                    let update = `<a href="./update.php?userID=${item.id}" class="btn btn-primary btn-sm">Update</a>`;
+
                     let deleteBtn = `<a onclick="confirm('Are you sure, Do you want to delete?')"  href="./handler.php?deleteUser=${item.id}" class="btn btn-danger btn-sm">Delete</a>`;
+
+                    let btn =  update + ' ' + deleteBtn;
 
                     var row = $('<tr>');
                     row.append($('<td>').text(index + 1));
@@ -88,7 +103,7 @@
                     row.append($('<td>').html(proPic));
                     row.append($('<td>').html(signature));
                     row.append($('<td>').text(item.approval_status));
-                    row.append($('<td>').html(deleteBtn));
+                    row.append($('<td>').html(btn));
 
                     tableBody.append(row);
                 });

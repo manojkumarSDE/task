@@ -8,6 +8,11 @@
         header('Location: '. BASE_URL);
     }
 
+    if($_SESSION['role_id'] !== 2){
+        header( 'HTTP/1.0 403 Forbidden', TRUE, 403 );
+        die ("Access Denied!");
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +68,7 @@
     <script type="text/javascript">
     $(document).ready(function () {
         $.ajax({
-            url: '../../json/handler.php?users',
+            url: '<?php echo BASE_URL; ?>json/handler.php?users',
             method: 'GET',
             dataType: 'json',
             success: function (data) {
